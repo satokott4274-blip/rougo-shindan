@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>老後、毎月いくら足りない？</title>
+<meta name="description" content="年齢・住まい・年金の見込みを入れるだけで、老後に毎月いくら足りないかが分かります。その不足が、家何軒分で埋まるかも出ます。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1F3350; --navy2:#2C4670; --amber:#E7B065; --amber-d:#C98F3A;
+  --cream:#F7F4EC; --card:#FFFFFF; --ink:#1F2A37; --sub:#5F6B7A; --line:#E3DED2;
+  --ok:#2E8B57; --ng:#C0392B; --ng-bg:#FBEAEA;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--cream);color:var(--ink);font-family:"Noto Sans JP",system-ui,sans-serif;line-height:1.7;-webkit-text-size-adjust:100%}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 48px}
+header{background:var(--navy);color:#fff;padding:28px 16px 30px;text-align:center}
+header .kicker{display:inline-block;font-size:12px;letter-spacing:.08em;color:var(--navy);background:var(--amber);padding:3px 10px;border-radius:999px;font-weight:700}
+header h1{font-size:28px;line-height:1.4;margin:14px 0 10px;font-weight:900}
+header h1 em{font-style:normal;color:var(--amber)}
+header p{margin:0;font-size:14px;opacity:.92}
+.sec{margin:28px 0 12px;font-size:18px;font-weight:900;color:var(--navy);border-left:6px solid var(--amber);padding-left:10px;line-height:1.4}
+.note{font-size:13px;color:var(--sub);margin:0 0 12px}
+.q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.q h2{font-size:15.5px;margin:0 0 4px}
+.q .hint{font-size:12.5px;color:var(--sub);margin:0 0 10px}
+.q label.sm{font-size:12px;color:var(--sub);display:block;margin-bottom:2px}
+.row{display:flex;gap:8px}
+.row>div{flex:1;min-width:0}
+input,select{width:100%;font:inherit;font-size:16px;padding:9px 10px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+input:focus,select:focus{outline:none;border-color:var(--navy)}
+.unit{display:flex;align-items:center;gap:6px}
+.unit span{flex:none;font-size:14px;color:var(--sub)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opts.three{grid-template-columns:1fr 1fr 1fr}
+.opt{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:10px 6px;font:inherit;font-size:14px;color:var(--ink);cursor:pointer;text-align:center;line-height:1.4}
+.opt small{display:block;font-size:11.5px;color:var(--sub)}
+.opt[aria-pressed="true"]{border-color:var(--navy);box-shadow:0 0 0 2px var(--navy) inset;background:#F3F6FB;font-weight:700}
+.sub{margin-top:12px}
+[hidden]{display:none!important}
+.result{background:var(--navy);color:#fff;border-radius:16px;padding:22px 18px;margin:22px 0 12px}
+.result h2{margin:0 0 6px;font-size:13px;font-weight:700;color:var(--amber);letter-spacing:.06em}
+.result .wait{margin:0;font-size:14px;opacity:.85}
+.big{font-size:15px;margin:0 0 4px}
+.big b{display:block;font-size:44px;line-height:1.2;color:var(--amber);font-weight:900}
+.big b small{font-size:18px;color:#fff;margin-left:2px}
+.bars{margin:14px 0 6px}
+.bar{display:flex;align-items:center;gap:8px;font-size:12.5px;margin-bottom:6px}
+.bar span{flex:none;width:64px;opacity:.85}
+.bar i{display:block;height:18px;border-radius:5px}
+.bar em{font-style:normal;flex:none;font-weight:700}
+.bar .in{background:#7FB3E0}
+.bar .out{background:var(--amber)}
+.total{background:rgba(255,255,255,.1);border-radius:12px;padding:12px 14px;margin-top:12px;font-size:14px}
+.total b{font-size:22px;color:var(--amber);white-space:nowrap}
+.houses{background:var(--card);border:2px solid var(--amber);border-radius:16px;padding:20px 16px;margin:14px 0}
+.houses h2{margin:0 0 6px;font-size:13px;color:var(--amber-d);letter-spacing:.06em}
+.houses .n{font-size:17px;margin:0 0 10px;font-weight:700;color:var(--navy);line-height:1.5}
+.houses .n b{font-size:40px;color:var(--navy);font-weight:900}
+.icons{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px}
+.icons svg{width:34px;height:34px}
+.cmp{display:flex;gap:8px;margin-top:6px}
+.cmp div{flex:1;border-radius:12px;padding:10px;text-align:center;font-size:12.5px;line-height:1.5}
+.cmp .a{background:var(--ng-bg)}
+.cmp .b{background:#EEF3F9}
+.cmp b{display:block;font-size:20px;color:var(--navy)}
+.houses p.src{font-size:12px;color:var(--sub);margin:10px 0 0}
+.ok{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 16px;margin:14px 0;font-size:15px}
+.cta{background:var(--navy);color:#fff;border-radius:16px;padding:20px 16px;margin:18px 0}
+.cta h2{margin:0 0 8px;font-size:19px;line-height:1.5;font-weight:900}
+.cta h2 em{font-style:normal;color:var(--amber)}
+.cta ul{margin:0 0 4px;padding-left:1.2em;font-size:14px}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:15px 10px;font:inherit;font-size:16px;font-weight:900;cursor:pointer;text-align:center;text-decoration:none;margin-top:12px;background:#06C755;color:#fff}
+.cta small{display:block;font-size:12px;opacity:.85;margin-top:8px;text-align:center}
+footer{font-size:11.5px;color:var(--sub);margin-top:28px;line-height:1.7}
+footer b{color:var(--ink)}
+</style>
+</head>
+<body>
+<header>
+  <h1>老後、毎月<br><em>いくら足りない？</em></h1>
+  <p>4つ答えるだけで、あなたの老後の<br>「毎月の足りない額」が出ます。<br>その不足が、家何軒分で埋まるかも。</p>
+</header>
+
+<div class="wrap">
+  <h2 class="sec">あなたのこと</h2>
+  <p class="note">だいたいでOK。年金の見込みは「ねんきん定期便」に書いてあります。</p>
+
+  <div class="q">
+    <h2>1　いま何歳？</h2>
+    <div class="unit"><input id="age" type="number" inputmode="numeric" min="18" max="100" placeholder="例 45"><span>歳</span></div>
+  </div>
+
+  <div class="q">
+    <h2>2　老後は一人？夫婦？</h2>
+    <div class="opts" data-k="hh">
+      <button class="opt" data-v="single">一人</button>
+      <button class="opt" data-v="couple">夫婦</button>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>3　老後の住まいは？</h2>
+    <div class="opts" data-k="home">
+      <button class="opt" data-v="own">持ち家<small>ローン完済の予定</small></button>
+      <button class="opt" data-v="rent">賃貸<small>家賃を払い続ける</small></button>
+    </div>
+    <div class="sub" id="rentBox" hidden>
+      <label class="sm" for="rent">老後に払う家賃（月）</label>
+      <div class="unit"><input id="rent" type="number" inputmode="decimal" min="0" step="0.1" placeholder="例 6"><span>万円</span></div>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>4　年金はどのくらい？</h2>
+    <p class="hint">分からなければ、いちばん長く働いた形を選んでください。全国の平均額が入ります。</p>
+    <label class="sm">あなた</label>
+    <div class="opts three" data-k="p1">
+      <button class="opt" data-v="kosei">会社員<small>公務員</small></button>
+      <button class="opt" data-v="kokumin">自営業<small>フリーランス</small></button>
+      <button class="opt" data-v="self">自分で<small>入れる</small></button>
+    </div>
+    <div class="sub" id="p1Box" hidden>
+      <div class="unit"><input id="p1v" type="number" inputmode="decimal" min="0" step="0.1" placeholder="例 13.5"><span>万円/月</span></div>
+    </div>
+    <div id="p2Wrap" hidden>
+      <label class="sm" style="margin-top:12px">配偶者</label>
+      <div class="opts three" data-k="p2">
+        <button class="opt" data-v="kosei">会社員<small>公務員</small></button>
+        <button class="opt" data-v="kokumin">自営業・<small>専業主婦(夫)</small></button>
+        <button class="opt" data-v="self">自分で<small>入れる</small></button>
+      </div>
+      <div class="sub" id="p2Box" hidden>
+        <div class="unit"><input id="p2v" type="number" inputmode="decimal" min="0" step="0.1" placeholder="例 6"><span>万円/月</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="q">
+    <h2>老後のために貯めているお金（あれば）</h2>
+    <p class="hint">空けたままでもOK。</p>
+    <div class="row">
+      <div><label class="sm" for="save">貯金・退職金の見込み</label><div class="unit"><input id="save" type="number" inputmode="numeric" min="0" placeholder="例 500"><span>万円</span></div></div>
+      <div><label class="sm" for="until">何歳まで計算？</label><select id="until"><option value="85">85歳</option><option value="90" selected>90歳</option><option value="95">95歳</option><option value="100">100歳</option></select></div>
+    </div>
+  </div>
+
+  <div class="result" id="result" aria-live="polite">
+    <h2>あなたの老後</h2>
+    <p class="wait" id="wait">上の4つを答えると、ここに出ます。</p>
+    <div id="out" hidden>
+      <p class="big" id="bigLabel">毎月、足りないのは<b><span id="gap">0</span><small>万円</small></b></p>
+      <div class="bars">
+        <div class="bar"><span>かかる</span><i class="out" id="barOut"></i><em id="outTxt"></em></div>
+        <div class="bar"><span>年金</span><i class="in" id="barIn"></i><em id="inTxt"></em></div>
+      </div>
+      <div class="total" id="totalBox"></div>
+    </div>
+  </div>
+
+  <div class="houses" id="houses" hidden>
+    <h2>この不足を、家で埋めると</h2>
+    <p class="n">築古の戸建て <b id="hn">0</b> 軒分</p>
+    <div class="icons" id="icons"></div>
+    <div class="cmp">
+      <div class="a">貯金だけで埋めるなら<b id="cmpA"></b>老後までに用意</div>
+      <div class="b">家で埋めるなら<b id="cmpB"></b>買うためのお金の目安</div>
+    </div>
+    <p class="src">本に載せた僕の実例のうち、いちばん手残りが少ない家（総投資295万円・実質利回り15.6%＝手残り月約3.8万円）で数えています。税金や空室は人によって違うので、あくまで目安です。</p>
+  </div>
+
+  <div class="ok" id="okBox" hidden></div>
+
+  <div class="cta" id="cta" hidden>
+    <h2>あなたの場合<br><em>何軒を、いつまでに？</em></h2>
+    <ul>
+      <li>いまの貯金で、1軒目はいつ買えるか</li>
+      <li>65歳までに、何軒そろえれば間に合うか</li>
+      <li>あなたの住んでる地域なら、どの街で探すか</li>
+    </ul>
+    <a class="btn" id="line" href="https://utage-system.com/line/open/PC8dzTB3dJcz?mtid=ZNH9mXMFhOUp" target="_blank" rel="noopener">LINEで個別相談を申し込む</a>
+    <small>この診断の結果を見せてもらえれば、話が早いです。</small>
+  </div>
+
+  <footer>
+    <b>計算のもと</b><br>
+    ・老後にかかるお金：総務省「家計調査（家計収支編）2025年平均」65歳以上の単身無職世帯／夫婦のみの無職世帯の消費支出＋税金・社会保険料（一人 161,435円・夫婦 296,829円）。賃貸の人は、この中の住居費（一人 11,416円・夫婦 17,739円）を、入れた家賃に置き換えています。<br>
+    ・年金の平均：厚生労働省「令和6年度 厚生年金保険・国民年金事業の概況」令和6年度末の老齢年金の受給者平均月額（厚生年金 151,142円〈基礎年金を含む〉・国民年金 59,431円）。<br>
+    ・家1軒の手残り：『格安中古で始める！「空き家×不動産投資」入門』の実例（総投資295万円・実質利回り15.6%）。<br>
+    平均と目安による試算で、将来の年金額や収益を約束するものではありません。入力した内容は、この画面の外には送られません。
+  </footer>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var SURVEY = {
+    single:{need:161435, housing:11416},
+    couple:{need:296829, housing:17739}
+  };
+  var PENSION = {kosei:151142, kokumin:59431};
+  var HOUSE = {invest:2950000, monthly:2950000*0.156/12}; // 約38,350円
+  var state = {hh:'', home:'', p1:'', p2:''};
+  var KEY = 'bororich-rougo-shindan-v1';
+
+  document.querySelectorAll('.opts').forEach(function(g){
+    g.addEventListener('click', function(e){
+      var b = e.target.closest('.opt'); if(!b) return;
+      state[g.dataset.k] = b.dataset.v;
+      paint(); update();
+    });
+  });
+  function paint(){
+    document.querySelectorAll('.opts').forEach(function(g){
+      g.querySelectorAll('.opt').forEach(function(b){
+        b.setAttribute('aria-pressed', state[g.dataset.k] === b.dataset.v ? 'true' : 'false');
+      });
+    });
+    $('rentBox').hidden = state.home !== 'rent';
+    $('p2Wrap').hidden = state.hh !== 'couple';
+    $('p1Box').hidden = state.p1 !== 'self';
+    $('p2Box').hidden = state.p2 !== 'self';
+  }
+  function man(id){ // 万円入力 → 円
+    var v = parseFloat(String($(id).value).replace(/,/g,''));
+    if(!isFinite(v) || v < 0) return null;
+    if(v >= 1000 && id !== 'save') v = v / 10000; // 円で入れた時
+    return v * 10000;
+  }
+  function pension(k, boxId){
+    if(k === 'self') return man(boxId);
+    return PENSION[k] || null;
+  }
+  function yen2man(v){ return (Math.round(v/1000)/10).toFixed(1).replace(/\.0$/,''); }
+  function bigMan(v){ // 大きい額は万円で丸める
+    var m = Math.round(v/10000);
+    return m.toLocaleString('ja-JP') + '万円';
+  }
+
+  function update(){
+    save();
+    var age = parseInt($('age').value, 10);
+    var ready = state.hh && state.home && state.p1 && (state.hh === 'single' || state.p2) && isFinite(age);
+    var s = SURVEY[state.hh];
+    var p1 = pension(state.p1, 'p1v');
+    var p2 = state.hh === 'couple' ? pension(state.p2, 'p2v') : 0;
+    var rent = state.home === 'rent' ? man('rent') : 0;
+    if(!ready || p1 === null || p2 === null || (state.home === 'rent' && rent === null)){
+      $('wait').hidden = false; $('out').hidden = true; $('houses').hidden = true; $('cta').hidden = true; $('okBox').hidden = true;
+      return;
+    }
+    var need = s.need + (state.home === 'rent' ? (rent - s.housing) : 0);
+    var inc = p1 + p2;
+    var gap = need - inc;
+    var until = parseInt($('until').value, 10);
+    var start = Math.max(65, age);
+    var years = Math.max(0, until - start);
+    var saved = man('save') || 0;
+
+    $('wait').hidden = true; $('out').hidden = false; $('cta').hidden = false;
+    var max = Math.max(need, inc);
+    $('barOut').style.width = (need/max*100*0.62) + '%';
+    $('barIn').style.width = (inc/max*100*0.62) + '%';
+    $('outTxt').textContent = yen2man(need) + '万円';
+    $('inTxt').textContent = yen2man(inc) + '万円';
+
+    if(gap <= 0){
+      $('bigLabel').firstChild.textContent = '毎月、余るのは';
+      $('gap').textContent = yen2man(-gap);
+      $('totalBox').textContent = '平均どおりなら、年金で毎月の暮らしはまかなえる計算です。';
+      $('houses').hidden = true;
+      $('okBox').hidden = false;
+      $('okBox').textContent = 'ただし病気や家の修理など、平均に入っていない出費もあります。年金のほかに「毎月入ってくるお金」を1本持っておくと安心です。';
+      return;
+    }
+    $('okBox').hidden = true;
+    $('bigLabel').firstChild.textContent = '毎月、足りないのは';
+    $('gap').textContent = yen2man(gap);
+    var total = gap * 12 * years;
+    var left = total - saved;
+    var t = start + '歳から' + until + '歳まで' + years + '年で、合計<br><b>' + bigMan(total) + '</b>';
+    if(saved > 0){
+      t += left > 0
+        ? '<br>貯めているお金を引いても、まだ <b>' + bigMan(left) + '</b> 足りません。'
+        : '<br>貯めているお金で、いったんは足ります。ただ使えば減っていくお金です。';
+    }
+    $('totalBox').innerHTML = t;
+
+    var n = Math.max(1, Math.ceil(gap / HOUSE.monthly));
+    $('houses').hidden = false;
+    $('hn').textContent = n;
+    var ic = $('icons'); ic.innerHTML = '';
+    for(var i=0;i<Math.min(n,12);i++){
+      ic.insertAdjacentHTML('beforeend','<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 3l9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" fill="#1F3350"/><rect x="10" y="15" width="4" height="7" fill="#E7B065"/></svg>');
+    }
+    $('cmpA').textContent = bigMan(Math.max(0, total));
+    $('cmpB').textContent = bigMan(n * HOUSE.invest);
+  }
+
+  function save(){
+    try{
+      localStorage.setItem(KEY, JSON.stringify({state:state, age:$('age').value, rent:$('rent').value,
+        p1v:$('p1v').value, p2v:$('p2v').value, save:$('save').value, until:$('until').value}));
+    }catch(e){}
+  }
+  function load(){
+    try{
+      var d = JSON.parse(localStorage.getItem(KEY) || 'null'); if(!d) return;
+      state = Object.assign(state, d.state || {});
+      ['age','rent','p1v','p2v','save','until'].forEach(function(k){ if(d[k] != null && d[k] !== '') $(k).value = d[k]; });
+    }catch(e){}
+  }
+  ['age','rent','p1v','p2v','save','until'].forEach(function(id){
+    $(id).addEventListener('input', update); $(id).addEventListener('change', update);
+  });
+  load(); paint(); update();
+})();
+</script>
+</body>
+</html>
